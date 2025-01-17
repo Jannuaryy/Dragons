@@ -1,0 +1,1 @@
+dragons_screen_width, dragons_screen_height = 500, 500
