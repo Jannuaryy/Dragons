@@ -1,10 +1,12 @@
 import pygame
 import sys
 import random
+import start_screen
 
 pygame.init()
+start_screen.start_screen()
 
-width, height = 500, 500
+width, height = 1280, 720
 FPS = 20
 
 light_gray = (211, 211, 211)
