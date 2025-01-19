@@ -4,17 +4,12 @@ from config import *
 
 screen = pygame.display.set_mode((dragons_screen_width, dragons_screen_height))
 
-FPS = 50
-
 def terminate():
     pygame.quit()
     sys.exit()
 
 def start_screen():
-    intro_text = ["ЗАСТАВКА", "",
-                  "Она будет нарисована",
-                  "Правила для первого",
-                  "Правила для второго"]
+    intro_text = ["ЗАСТАВКА"]
 
     font = pygame.font.Font(None, 30)
     text_coord = 50
@@ -35,4 +30,3 @@ def start_screen():
                     event.type == pygame.MOUSEBUTTONDOWN:
                 return  # начинаем игру
         pygame.display.flip()
-        # clock.tick(FPS)

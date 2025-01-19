@@ -2,20 +2,16 @@ import pygame
 import sys
 import random
 import start_screen
+from config import *
 
 pygame.init()
 start_screen.start_screen()
-
-width, height = 1280, 720
-FPS = 20
 
 light_gray = (211, 211, 211)
 blue = (0, 0, 255)
 red = (255, 0, 0)
 green = (0, 255, 0)
 black = (0, 0, 0)
-
-size = 20
 
 player1_x = 500
 player1_y = 500
@@ -29,7 +25,7 @@ fruits = []
 fruits_player1 = 0
 fruits_player2 = 0
 
-screen = pygame.display.set_mode((width, height))
+screen = pygame.display.set_mode((dragons_screen_width, dragons_screen_height))
 pygame.display.set_caption("Дракончики")
 
 countdown = 60
@@ -39,18 +35,18 @@ running_timer = False
 def generate_food(num_food):
     food_positions = []
     while len(food_positions) < num_food:
-        foodx = round(random.randrange(0, width - size) / size) * size
-        foody = round(random.randrange(0, height - size) / size) * size
+        foodx = round(random.randrange(0, dragons_screen_width - size_of_field) / size_of_field) * size_of_field
+        foody = round(random.randrange(0, dragons_screen_height - size_of_field) / size_of_field) * size_of_field
         if (foodx, foody) not in food_positions:
             food_positions.append((foodx, foody))
     return food_positions
 
 
 def draw_grid():
-    for x in range(0, width, size):
-        pygame.draw.line(screen, black, (x, 0), (x, height))
-    for y in range(0, height, size):
-        pygame.draw.line(screen, black, (0, y), (width, y))
+    for x in range(0, dragons_screen_width, size_of_field):
+        pygame.draw.line(screen, black, (x, 0), (x, dragons_screen_height))
+    for y in range(0, dragons_screen_height, size_of_field):
+        pygame.draw.line(screen, black, (0, y), (dragons_screen_width, y))
 
 
 fruits = generate_food(num_food)
@@ -67,27 +63,27 @@ while running:
     keys = pygame.key.get_pressed()
 
     if keys[pygame.K_LEFT]:
-        player1_x -= size
+        player1_x -= size_of_field
     if keys[pygame.K_RIGHT]:
-        player1_x += size
+        player1_x += size_of_field
     if keys[pygame.K_UP]:
-        player1_y -= size
+        player1_y -= size_of_field
     if keys[pygame.K_DOWN]:
-        player1_y += size
+        player1_y += size_of_field
 
     if keys[pygame.K_a]:
-        player2_x -= size
+        player2_x -= size_of_field
     if keys[pygame.K_d]:
-        player2_x += size
+        player2_x += size_of_field
     if keys[pygame.K_w]:
-        player2_y -= size
+        player2_y -= size_of_field
     if keys[pygame.K_s]:
-        player2_y += size
+        player2_y += size_of_field
 
-    player1_x = max(0, min(width - size, player1_x))
-    player1_y = max(0, min(height - size, player1_y))
-    player2_x = max(0, min(width - size, player2_x))
-    player2_y = max(0, min(height - size, player2_y))
+    player1_x = max(0, min(dragons_screen_width - size_of_field, player1_x))
+    player1_y = max(0, min(dragons_screen_height - size_of_field, player1_y))
+    player2_x = max(0, min(dragons_screen_width - size_of_field, player2_x))
+    player2_y = max(0, min(dragons_screen_height - size_of_field, player2_y))
 
     if (player1_x, player1_y) in fruits:
         fruits.remove((player1_x, player1_y))
@@ -112,10 +108,10 @@ while running:
     draw_grid()
 
     for foodx, foody in fruits:
-        pygame.draw.rect(screen, green, [foodx, foody, size, size])
+        pygame.draw.rect(screen, green, [foodx, foody, size_of_field, size_of_field])
 
-    pygame.draw.rect(screen, blue, (player1_x, player1_y, size, size))
-    pygame.draw.rect(screen, red, (player2_x, player2_y, size, size))
+    pygame.draw.rect(screen, blue, (player1_x, player1_y, size_of_field, size_of_field))
+    pygame.draw.rect(screen, red, (player2_x, player2_y, size_of_field, size_of_field))
 
     pygame.display.flip()
     clock.tick(FPS)
