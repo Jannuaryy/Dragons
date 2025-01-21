@@ -1,36 +1,19 @@
 import pygame
 import sys
 import random
-import start_screen
+import start_screen, win_lose_screen
 from config import *
 
 pygame.init()
 start_screen.start_screen()
 
-light_gray = (211, 211, 211)
-blue = (0, 0, 255)
-red = (255, 0, 0)
-green = (0, 255, 0)
-black = (0, 0, 0)
-
-player1_x = 500
-player1_y = 500
-
-player2_x = 0
-player2_y = 0
-
-num_food = 10
-fruits = []
 
 fruits_player1 = 0
 fruits_player2 = 0
 
 screen = pygame.display.set_mode((dragons_screen_width, dragons_screen_height))
-pygame.display.set_caption("Дракончики")
-
-countdown = 60
+pygame.display.set_caption(dragons_game_name)
 running_timer = False
-
 
 def generate_food(num_food):
     food_positions = []
@@ -100,11 +83,10 @@ while running:
 
     if running_timer:
         countdown -= 1 / FPS
-        if countdown <= 0:
-            running = False
+    if countdown <= 0:
+        running = False
 
     screen.fill(light_gray)
-
     draw_grid()
 
     for foodx, foody in fruits:
@@ -115,6 +97,8 @@ while running:
 
     pygame.display.flip()
     clock.tick(FPS)
+
+win_lose_screen.win_lose_screen(fruits_player1, fruits_player2)
 
 pygame.quit()
 sys.exit()

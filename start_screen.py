@@ -3,6 +3,7 @@ import pygame
 from config import *
 
 screen = pygame.display.set_mode((dragons_screen_width, dragons_screen_height))
+pygame.display.set_caption(dragons_game_name)
 
 def terminate():
     pygame.quit()
