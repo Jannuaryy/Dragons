@@ -18,3 +18,4 @@ player2_x = 0
 player2_y = 0
 
 num_food = 10
+border_thickness = 100

@@ -18,8 +18,8 @@ running_timer = False
 def generate_food(num_food):
     food_positions = []
     while len(food_positions) < num_food:
-        foodx = round(random.randrange(0, dragons_screen_width - size_of_field) / size_of_field) * size_of_field
-        foody = round(random.randrange(0, dragons_screen_height - size_of_field) / size_of_field) * size_of_field
+        foodx = round(random.randrange(0 + border_thickness, dragons_screen_width - size_of_field - border_thickness) / size_of_field) * size_of_field
+        foody = round(random.randrange(0 + border_thickness, dragons_screen_height - size_of_field - border_thickness) / size_of_field) * size_of_field
         if (foodx, foody) not in food_positions:
             food_positions.append((foodx, foody))
     return food_positions
@@ -63,10 +63,10 @@ while running:
     if keys[pygame.K_s]:
         player2_y += size_of_field
 
-    player1_x = max(0, min(dragons_screen_width - size_of_field, player1_x))
-    player1_y = max(0, min(dragons_screen_height - size_of_field, player1_y))
-    player2_x = max(0, min(dragons_screen_width - size_of_field, player2_x))
-    player2_y = max(0, min(dragons_screen_height - size_of_field, player2_y))
+    player1_x = max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, player1_x))
+    player1_y = max(border_thickness, min(dragons_screen_height - size_of_field - border_thickness, player1_y))
+    player2_x = max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, player2_x))
+    player2_y = max(border_thickness, min(dragons_screen_height - size_of_field - border_thickness, player2_y))
 
     if (player1_x, player1_y) in fruits:
         fruits.remove((player1_x, player1_y))
@@ -94,6 +94,8 @@ while running:
 
     pygame.draw.rect(screen, blue, (player1_x, player1_y, size_of_field, size_of_field))
     pygame.draw.rect(screen, red, (player2_x, player2_y, size_of_field, size_of_field))
+
+    pygame.draw.rect(screen, black, (0, 0, dragons_screen_width, dragons_screen_height), border_thickness)
 
     pygame.display.flip()
     clock.tick(FPS)
