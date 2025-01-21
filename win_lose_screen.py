@@ -5,10 +5,6 @@ from config import *
 screen = pygame.display.set_mode((dragons_screen_width, dragons_screen_height))
 pygame.display.set_caption(dragons_game_name)
 
-# def terminate():
-#     pygame.quit()
-#     sys.exit()
-
 def win_lose_screen(fruits_player1, fruits_player2):
     screen.fill(light_gray)
     result_info = 'Ничья!'
@@ -35,8 +31,5 @@ def win_lose_screen(fruits_player1, fruits_player2):
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 return
-            # elif event.type == pygame.KEYDOWN or \
-            #         event.type == pygame.MOUSEBUTTONDOWN:
-            #     pygame.quit()
-            #     sys.exit()
+
         pygame.display.flip()
