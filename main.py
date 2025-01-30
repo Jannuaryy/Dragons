@@ -7,22 +7,40 @@ from config import *
 pygame.init()
 start_screen.start_screen()
 
-
 fruits_player1 = 0
 fruits_player2 = 0
+
+coins_player1 = 0
+coins_player2 = 0
 
 screen = pygame.display.set_mode((dragons_screen_width, dragons_screen_height))
 pygame.display.set_caption(dragons_game_name)
 running_timer = False
 
+
 def generate_food(num_food):
     food_positions = []
     while len(food_positions) < num_food:
-        foodx = round(random.randrange(0 + border_thickness, dragons_screen_width - size_of_field - border_thickness) / size_of_field) * size_of_field
-        foody = round(random.randrange(0 + border_thickness, dragons_screen_height - size_of_field - border_thickness) / size_of_field) * size_of_field
+        foodx = round(random.randrange(0 + border_thickness,
+                                       dragons_screen_width - size_of_field - border_thickness) / size_of_field) * size_of_field
+        foody = round(random.randrange(0 + border_thickness,
+                                       dragons_screen_height - size_of_field - border_thickness) / size_of_field) * size_of_field
         if (foodx, foody) not in food_positions:
             food_positions.append((foodx, foody))
     return food_positions
+
+
+def generate_coin(num_coins):
+    coin_positions = []
+    while len(coin_positions) < num_coins:
+        coinx = round(random.randrange(0 + border_thickness,
+                                       dragons_screen_width - size_of_field - border_thickness) / size_of_field) * size_of_field
+        coiny = round(random.randrange(0 + border_thickness,
+                                       dragons_screen_width - size_of_field - border_thickness) / size_of_field) * size_of_field
+        if (coinx, coiny) not in coin_positions:
+            if (coinx, coiny) != (player1_x, player1_y) or (coinx, coiny) != (player2_x, player2_y):
+                coin_positions.append((coinx, coiny))
+    return coin_positions
 
 
 def draw_grid():
@@ -33,6 +51,8 @@ def draw_grid():
 
 
 fruits = generate_food(num_food)
+
+coins = generate_coin(num_coins)
 
 clock = pygame.time.Clock()
 running = True
@@ -81,6 +101,19 @@ while running:
         new_foods = generate_food(new_foods_needed)
         fruits.extend(new_foods)
 
+    if (player1_x, player1_y) in coins:
+        coins.remove((player1_x, player1_y))
+        coins_player1 += 1
+
+    if (player2_x, player2_y) in coins:
+        coins.remove((player2_x, player2_y))
+        coins_player2 += 1
+
+    if len(coins) < num_coins:
+        new_coins_needed = num_coins - len(coins)
+        new_coins = generate_food(new_coins_needed)
+        coins.extend(new_coins)
+
     if running_timer:
         countdown -= 1 / FPS
     if countdown <= 0:
@@ -91,6 +124,9 @@ while running:
 
     for foodx, foody in fruits:
         pygame.draw.rect(screen, green, [foodx, foody, size_of_field, size_of_field])
+
+    for coinx, coiny in coins:
+        pygame.draw.rect(screen, yellow, [coinx, coiny, size_of_field, size_of_field])
 
     pygame.draw.rect(screen, blue, (player1_x, player1_y, size_of_field, size_of_field))
     pygame.draw.rect(screen, red, (player2_x, player2_y, size_of_field, size_of_field))
