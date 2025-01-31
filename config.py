@@ -3,7 +3,7 @@ dragons_game_name = 'Дракончики'
 dragons_screen_width, dragons_screen_height = 800, 800
 FPS = 15
 size_of_field = 20
-countdown = 5  # Время раунда в секундах
+countdown = 30  # Время раунда в секундах
 
 light_gray = (211, 211, 211)
 blue = (0, 0, 255)

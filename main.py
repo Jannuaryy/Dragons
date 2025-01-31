@@ -1,4 +1,5 @@
 import pygame
+import time
 import sys
 import random
 import start_screen, win_lose_screen
@@ -12,6 +13,10 @@ fruits_player2 = 0
 
 coins_player1 = 0
 coins_player2 = 0
+
+font = pygame.font.Font(None, 74)
+last_update_time = time.time()
+remaining_time = countdown
 
 screen = pygame.display.set_mode((dragons_screen_width, dragons_screen_height))
 pygame.display.set_caption(dragons_game_name)
@@ -55,6 +60,7 @@ fruits = generate_food(num_food)
 coins = generate_coin(num_coins)
 
 clock = pygame.time.Clock()
+
 running = True
 while running:
     for event in pygame.event.get():
@@ -65,28 +71,42 @@ while running:
 
     keys = pygame.key.get_pressed()
 
+    new_player1_x = player1_x
+    new_player1_y = player1_y
+    new_player2_x = player2_x
+    new_player2_y = player2_y
+
     if keys[pygame.K_LEFT]:
-        player1_x -= size_of_field
+        new_player1_x -= size_of_field
     if keys[pygame.K_RIGHT]:
-        player1_x += size_of_field
+        new_player1_x += size_of_field
     if keys[pygame.K_UP]:
-        player1_y -= size_of_field
+        new_player1_y -= size_of_field
     if keys[pygame.K_DOWN]:
-        player1_y += size_of_field
+        new_player1_y += size_of_field
 
     if keys[pygame.K_a]:
-        player2_x -= size_of_field
+        new_player2_x -= size_of_field
     if keys[pygame.K_d]:
-        player2_x += size_of_field
+        new_player2_x += size_of_field
     if keys[pygame.K_w]:
-        player2_y -= size_of_field
+        new_player2_y -= size_of_field
     if keys[pygame.K_s]:
-        player2_y += size_of_field
+        new_player2_y += size_of_field
 
-    player1_x = max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, player1_x))
-    player1_y = max(border_thickness, min(dragons_screen_height - size_of_field - border_thickness, player1_y))
-    player2_x = max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, player2_x))
-    player2_y = max(border_thickness, min(dragons_screen_height - size_of_field - border_thickness, player2_y))
+    if not (new_player1_x < new_player2_x + size_of_field and
+            new_player1_x + size_of_field > new_player2_x and
+            new_player1_y < new_player2_y + size_of_field and
+            new_player1_y + size_of_field > new_player2_y):
+        player1_x = max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, new_player1_x))
+        player1_y = max(border_thickness, min(dragons_screen_height - size_of_field - border_thickness, new_player1_y))
+
+    if not (new_player2_x < player1_x + size_of_field and
+            new_player2_x + size_of_field > player1_x and
+            new_player2_y < player1_y + size_of_field and
+            new_player2_y + size_of_field > player1_y):
+        player2_x = max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, new_player2_x))
+        player2_y = max(border_thickness, min(dragons_screen_height - size_of_field - border_thickness, new_player2_y))
 
     if (player1_x, player1_y) in fruits:
         fruits.remove((player1_x, player1_y))
@@ -132,6 +152,15 @@ while running:
     pygame.draw.rect(screen, red, (player2_x, player2_y, size_of_field, size_of_field))
 
     pygame.draw.rect(screen, black, (0, 0, dragons_screen_width, dragons_screen_height), border_thickness)
+
+    current_time = time.time()
+    if current_time - last_update_time >= 1:
+        remaining_time = max(0, remaining_time - 1)
+        last_update_time = current_time
+
+    countdown_text = font.render(str(remaining_time), True, light_gray)
+    text_rect = countdown_text.get_rect(topleft=(10, dragons_screen_height - 10 - countdown_text.get_height()))
+    screen.blit(countdown_text, text_rect)
 
     pygame.display.flip()
     clock.tick(FPS)
