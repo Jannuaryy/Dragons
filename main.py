@@ -94,7 +94,7 @@ while running:
             running_timer = True
 
     keys = pygame.key.get_pressed()
-    current_time = pygame.time.get_ticks()
+    current_ticks = pygame.time.get_ticks()
 
     new_player1_x = player1_x
     new_player1_y = player1_y
@@ -175,9 +175,9 @@ while running:
 
 
     # coins:
-    if current_time - coin_anim_last_update >= coin_anim_ticks:
+    if current_ticks - coin_anim_last_update >= coin_anim_ticks:
         coin_current_frame = coin_current_frame + 1 if coin_current_frame < len(coin_images_list) - 1 else 0
-        coin_anim_last_update = current_time
+        coin_anim_last_update = current_ticks
     for coinx, coiny in coins:
         # pygame.draw.rect(screen, yellow, [coinx, coiny, size_of_field, size_of_field])
         screen.blit(coin_images_list[coin_current_frame], (coinx, coiny))
