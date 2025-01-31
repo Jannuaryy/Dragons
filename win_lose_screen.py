@@ -1,12 +1,19 @@
 import sys
+
 import pygame
+from pygame.examples.chimp import load_image
+
 from config import *
 
 screen = pygame.display.set_mode((dragons_screen_width, dragons_screen_height))
 pygame.display.set_caption(dragons_game_name)
 
+image = pygame.image.load('textures/b2.png').convert_alpha()
+
 def win_lose_screen(fruits_player1, fruits_player2):
-    screen.fill(light_gray)
+    #screen.fill(light_gray)
+    screen.blit(image, (0, 0))
+
     result_info = 'Ничья!'
     if fruits_player1 != fruits_player2:
         result_info = "Выиграл игрок {}".format(1 if fruits_player1 > fruits_player2 else 2)
