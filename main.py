@@ -1,42 +1,28 @@
 import pygame
-import time
 import sys
 import random
 import start_screen, win_lose_screen
 from config import *
-import SpriteSheet
 
 pygame.init()
 start_screen.start_screen()
 
-# players results:
 fruits_player1 = 0
 fruits_player2 = 0
 
 coins_player1 = 0
 coins_player2 = 0
 
-font = pygame.font.Font(None, 74)
-last_update_time = time.time()
-remaining_time = countdown
+directions = ['UP', 'RIGHT', 'DOWN', 'LEFT']
 
-# coin animation:
-coin_anim_last_update = pygame.time.get_ticks()
-coin_anim_ticks = 80
-coin_anim_steps = 8
-coin_sprite_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/coin animation.png').convert_alpha())
-coin_images_list = []
+next_cage_player1_x = player1_x
+next_cage_player1_y = player1_y
+next_cage_player2_x = player2_x
+next_cage_player2_y = player2_y
+directions_player1 = directions[0]
+directions_player2 = directions[2]
 
-for i in range(coin_anim_steps):
-    coin_images_list.append(coin_sprite_sheet.get_image(i, 21, 20, 1, light_gray))
-coin_current_frame = 0
-
-items_sheets_list = []
-items_sprites_count = 6
-items_sprite_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/items.png').convert_alpha())
-
-for i in range(items_sprites_count):
-    items_sheets_list.append(items_sprite_sheet.get_image(i, 21, 20, 1, light_gray))
+bullets=[]
 
 screen = pygame.display.set_mode((dragons_screen_width, dragons_screen_height))
 pygame.display.set_caption(dragons_game_name)
@@ -52,11 +38,7 @@ def generate_food(num_food):
                                        dragons_screen_height - size_of_field - border_thickness) / size_of_field) * size_of_field
         if (foodx, foody) not in food_positions:
             food_positions.append((foodx, foody))
-    food_dic = {}
-    for foodx, foody in food_positions:
-        frame_num = random.randint(0, items_sprites_count - 1)
-        food_dic[(foodx, foody)] = frame_num
-    return food_dic
+    return food_positions
 
 
 def generate_coin(num_coins):
@@ -84,7 +66,6 @@ fruits = generate_food(num_food)
 coins = generate_coin(num_coins)
 
 clock = pygame.time.Clock()
-
 running = True
 while running:
     for event in pygame.event.get():
@@ -94,59 +75,130 @@ while running:
             running_timer = True
 
     keys = pygame.key.get_pressed()
-    current_ticks = pygame.time.get_ticks()
-
-    new_player1_x = player1_x
-    new_player1_y = player1_y
-    new_player2_x = player2_x
-    new_player2_y = player2_y
 
     if keys[pygame.K_LEFT]:
-        new_player1_x -= size_of_field
+        directions_player1 = directions[directions.index(directions_player1) - 1]
     if keys[pygame.K_RIGHT]:
-        new_player1_x += size_of_field
+        directions_player1 = directions[directions.index(directions_player1) - 3]
     if keys[pygame.K_UP]:
-        new_player1_y -= size_of_field
+        if directions.index(directions_player1) == 0:
+            player1_y -= size_of_field
+        if directions.index(directions_player1) == 1:
+            player1_x += size_of_field
+        if directions.index(directions_player1) == 2:
+            player1_y += size_of_field
+        if directions.index(directions_player1) == 3:
+            player1_x -= size_of_field
     if keys[pygame.K_DOWN]:
-        new_player1_y += size_of_field
-
+        if directions.index(directions_player1) == 0:
+            player1_y += size_of_field
+        if directions.index(directions_player1) == 1:
+            player1_x -= size_of_field
+        if directions.index(directions_player1) == 2:
+            player1_y -= size_of_field
+        if directions.index(directions_player1) == 3:
+            player1_x += size_of_field
+    def space():
+        if keys[pygame.K_SPACE]:
+            for i in range(1, 6):
+                bullet_player1_x=-1
+                bullet_player1_y=-1
+                if directions.index(directions_player1) == 0:
+                    bullet_player1_x=player1_x
+                    bullet_player1_y=player1_y-size_of_field*i
+                if directions.index(directions_player1) == 1:
+                    bullet_player1_x=player1_x+size_of_field*i
+                    bullet_player1_y=player1_y
+                if directions.index(directions_player1) == 2:
+                    bullet_player1_x=player1_x
+                    bullet_player1_y=player1_y+size_of_field*i
+                if directions.index(directions_player1) == 3:
+                    bullet_player1_x=player1_x-size_of_field*i
+                    bullet_player1_y=player1_y
+                pygame.draw.rect(screen, orange, (max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, bullet_player1_x)), max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, bullet_player1_y)), size_of_field, size_of_field))
+                bullets=[bullet_player1_x,bullet_player1_y]
     if keys[pygame.K_a]:
-        new_player2_x -= size_of_field
+        directions_player2 = directions[directions.index(directions_player2) - 1]
     if keys[pygame.K_d]:
-        new_player2_x += size_of_field
+        directions_player2 = directions[directions.index(directions_player2) - 3]
     if keys[pygame.K_w]:
-        new_player2_y -= size_of_field
+        if directions.index(directions_player2) == 0:
+            player2_y -= size_of_field
+        if directions.index(directions_player2) == 1:
+            player2_x += size_of_field
+        if directions.index(directions_player2) == 2:
+            player2_y += size_of_field
+        if directions.index(directions_player2) == 3:
+            player2_x -= size_of_field
     if keys[pygame.K_s]:
-        new_player2_y += size_of_field
+        if directions.index(directions_player2) == 0:
+            player2_y += size_of_field
+        if directions.index(directions_player2) == 1:
+            player2_x -= size_of_field
+        if directions.index(directions_player2) == 2:
+            player2_y -= size_of_field
+        if directions.index(directions_player2) == 3:
+            player2_x += size_of_field
 
-    if not (new_player1_x < new_player2_x + size_of_field and
-            new_player1_x + size_of_field > new_player2_x and
-            new_player1_y < new_player2_y + size_of_field and
-            new_player1_y + size_of_field > new_player2_y):
-        player1_x = max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, new_player1_x))
-        player1_y = max(border_thickness, min(dragons_screen_height - size_of_field - border_thickness, new_player1_y))
+    def q():
+        if keys[pygame.K_q]:
+            for i in range(1, 6):
+                bullet_player2_x=-1
+                bullet_player2_y=-1
+                if directions.index(directions_player2) == 0:
+                    bullet_player2_x=player2_x
+                    bullet_player2_y=player2_y-size_of_field*i
+                if directions.index(directions_player2) == 1:
+                    bullet_player2_x=player2_x+size_of_field*i
+                    bullet_player2_y=player2_y
+                if directions.index(directions_player2) == 2:
+                    bullet_player2_x=player2_x
+                    bullet_player2_y=player2_y+size_of_field*i
+                if directions.index(directions_player2) == 3:
+                    bullet_player2_x=player2_x-size_of_field*i
+                    bullet_player2_y=player2_y
+                pygame.draw.rect(screen, orange, (max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, bullet_player2_x)), max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, bullet_player2_y)), size_of_field, size_of_field))
+                bullets=[bullet_player2_x,bullet_player2_y]
 
-    if not (new_player2_x < player1_x + size_of_field and
-            new_player2_x + size_of_field > player1_x and
-            new_player2_y < player1_y + size_of_field and
-            new_player2_y + size_of_field > player1_y):
-        player2_x = max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, new_player2_x))
-        player2_y = max(border_thickness, min(dragons_screen_height - size_of_field - border_thickness, new_player2_y))
+    player1_x = max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, player1_x))
+    player1_y = max(border_thickness, min(dragons_screen_height - size_of_field - border_thickness, player1_y))
+    player2_x = max(border_thickness, min(dragons_screen_width - size_of_field - border_thickness, player2_x))
+    player2_y = max(border_thickness, min(dragons_screen_height - size_of_field - border_thickness, player2_y))
+    next_cage_player2_x = player2_x
+    next_cage_player2_y = player2_y
+    next_cage_player1_x = player1_x
+    next_cage_player1_y = player1_y
 
+    if directions.index(directions_player1) == 0:
+        next_cage_player1_y = player1_y - size_of_field
+    if directions.index(directions_player1) == 1:
+        next_cage_player1_x = player1_x + size_of_field
+    if directions.index(directions_player1) == 2:
+        next_cage_player1_y = player1_y + size_of_field
+    if directions.index(directions_player1) == 3:
+        next_cage_player1_x = player1_x - size_of_field
 
-    if fruits.get((player1_x, player1_y)) != None:
-        fruit_frame = fruits.pop((player1_x, player1_y))
+    if directions.index(directions_player2) == 0:
+        next_cage_player2_y = player2_y - size_of_field
+    if directions.index(directions_player2) == 1:
+        next_cage_player2_x = player2_x + size_of_field
+    if directions.index(directions_player2) == 2:
+        next_cage_player2_y = player2_y + size_of_field
+    if directions.index(directions_player2) == 3:
+        next_cage_player2_x = player2_x - size_of_field
+
+    if (player1_x, player1_y) in fruits:
+        fruits.remove((player1_x, player1_y))
         fruits_player1 += 1
 
-    if fruits.get((player2_x, player2_y)) != None:
-        fruit_frame = fruits.pop((player2_x, player2_y))
+    if (player2_x, player2_y) in fruits:
+        fruits.remove((player2_x, player2_y))
         fruits_player2 += 1
 
     if len(fruits) < num_food:
         new_foods_needed = num_food - len(fruits)
         new_foods = generate_food(new_foods_needed)
-        fruits = {**fruits, **new_foods}
-        # fruits.extend(new_foods)
+        fruits.extend(new_foods)
 
     if (player1_x, player1_y) in coins:
         coins.remove((player1_x, player1_y))
@@ -169,33 +221,22 @@ while running:
     screen.fill(light_gray)
     draw_grid()
 
-    for fruit_item in fruits.items():
-        #pygame.draw.rect(screen, green, [foodx, foody, size_of_field, size_of_field])
-        screen.blit(items_sheets_list[fruit_item[1]], fruit_item[0])
-
-
-    # coins:
-    if current_ticks - coin_anim_last_update >= coin_anim_ticks:
-        coin_current_frame = coin_current_frame + 1 if coin_current_frame < len(coin_images_list) - 1 else 0
-        coin_anim_last_update = current_ticks
-    for coinx, coiny in coins:
-        # pygame.draw.rect(screen, yellow, [coinx, coiny, size_of_field, size_of_field])
-        screen.blit(coin_images_list[coin_current_frame], (coinx, coiny))
-
-
     pygame.draw.rect(screen, blue, (player1_x, player1_y, size_of_field, size_of_field))
     pygame.draw.rect(screen, red, (player2_x, player2_y, size_of_field, size_of_field))
 
+    pygame.draw.rect(screen, grey, (next_cage_player1_x, next_cage_player1_y, size_of_field, size_of_field))
+    pygame.draw.rect(screen, grey, (next_cage_player2_x, next_cage_player2_y, size_of_field, size_of_field))
+
+    for foodx, foody in fruits:
+        pygame.draw.rect(screen, green, [foodx, foody, size_of_field, size_of_field])
+
+    for coinx, coiny in coins:
+        pygame.draw.rect(screen, yellow, [coinx, coiny, size_of_field, size_of_field])
+
     pygame.draw.rect(screen, black, (0, 0, dragons_screen_width, dragons_screen_height), border_thickness)
 
-    current_time = time.time()
-    if current_time - last_update_time >= 1:
-        remaining_time = max(0, remaining_time - 1)
-        last_update_time = current_time
-
-    countdown_text = font.render(str(remaining_time), True, light_gray)
-    text_rect = countdown_text.get_rect(topleft=(10, dragons_screen_height - 10 - countdown_text.get_height()))
-    screen.blit(countdown_text, text_rect)
+    shot1=[space()]
+    shot2=[q()]
 
     pygame.display.flip()
     clock.tick(FPS)
