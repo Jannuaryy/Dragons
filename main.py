@@ -16,9 +16,10 @@ fruits_player2 = 0
 coins_player1 = 0
 coins_player2 = 0
 
-font = pygame.font.Font(None, 74)
+font = pygame.font.Font('Skatec.ttf', 74)
 last_update_time = time.time()
 remaining_time = countdown
+countdown_active = False
 
 # coin animation:
 coin_anim_last_update = pygame.time.get_ticks()
@@ -92,6 +93,10 @@ while running:
             running = False
         if event.type == pygame.KEYDOWN and not running_timer:
             running_timer = True
+        if event.type == pygame.KEYDOWN:
+            if not countdown_active:
+                countdown_active = True
+                last_update_time = time.time()
 
     keys = pygame.key.get_pressed()
     current_ticks = pygame.time.get_ticks()
@@ -188,13 +193,22 @@ while running:
 
     pygame.draw.rect(screen, black, (0, 0, dragons_screen_width, dragons_screen_height), border_thickness)
 
-    current_time = time.time()
-    if current_time - last_update_time >= 1:
-        remaining_time = max(0, remaining_time - 1)
-        last_update_time = current_time
+    fruit_score_text = font.render(f'score {fruits_player2} : {fruits_player1}', True, light_gray)
+    coin_score_text = font.render(f'coins: {coins_player1 + coins_player2}', True, light_gray)
+
+    screen.blit(fruit_score_text, (30, 20))
+    screen.blit(coin_score_text, (dragons_screen_width // 2 + 120, 20))
+
+    if countdown_active:
+        current_time = time.time()
+        if current_time - last_update_time >= 1:
+            remaining_time = max(0, remaining_time - 1)
+            last_update_time = current_time
+        if remaining_time == 0:
+            countdown_active = False
 
     countdown_text = font.render(str(remaining_time), True, light_gray)
-    text_rect = countdown_text.get_rect(topleft=(10, dragons_screen_height - 10 - countdown_text.get_height()))
+    text_rect = countdown_text.get_rect(topleft=(30, dragons_screen_height - 30 - countdown_text.get_height()))
     screen.blit(countdown_text, text_rect)
 
     pygame.display.flip()
