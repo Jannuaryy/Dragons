@@ -36,6 +36,16 @@ items_sheets_list = []
 items_sprites_count = 6
 items_sprite_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/items.png').convert_alpha())
 
+
+dragon_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/dragon sprite.png').convert_alpha())
+dragon_sprite = dragon_sheet.get_image(0, 40, 40, 0.5, light_gray)
+
+dragon_sheet_2 = SpriteSheet.SpriteSheet(pygame.image.load('textures/blue dragon.png').convert_alpha())
+dragon_sprite_2 = dragon_sheet_2.get_image(0, 40, 40, 0.5, light_gray)
+
+frame_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/frame.png').convert_alpha())
+frame_image = frame_sheet.get_image(0, 800, 800, 1, light_gray)
+
 for i in range(items_sprites_count):
     items_sheets_list.append(items_sprite_sheet.get_image(i, 21, 20, 1, light_gray))
 
@@ -171,8 +181,11 @@ while running:
     if countdown <= 0:
         running = False
 
+    # screen.blit(frame_image, (0, 0))
     screen.fill(light_gray)
+
     draw_grid()
+
 
     for fruit_item in fruits.items():
         #pygame.draw.rect(screen, green, [foodx, foody, size_of_field, size_of_field])
@@ -187,15 +200,18 @@ while running:
         # pygame.draw.rect(screen, yellow, [coinx, coiny, size_of_field, size_of_field])
         screen.blit(coin_images_list[coin_current_frame], (coinx, coiny))
 
-
-    pygame.draw.rect(screen, blue, (player1_x, player1_y, size_of_field, size_of_field))
-    pygame.draw.rect(screen, red, (player2_x, player2_y, size_of_field, size_of_field))
+    screen.blit(dragon_sprite, (player1_x, player1_y))
+    #pygame.draw.rect(screen, blue, (player1_x, player1_y, size_of_field, size_of_field))
+    #pygame.draw.rect(screen, red, (player2_x, player2_y, size_of_field, size_of_field))
+    screen.blit(dragon_sprite_2, (player2_x, player2_y))
 
     pygame.draw.rect(screen, black, (0, 0, dragons_screen_width, dragons_screen_height), border_thickness)
+    # screen.blit(frame_image, (0, 0))
 
     fruit_score_text = font.render(f'score {fruits_player2} : {fruits_player1}', True, light_gray)
     coin_score_text = font.render(f'coins: {coins_player1 + coins_player2}', True, light_gray)
 
+    screen.blit(frame_image, (0, 0))
     screen.blit(fruit_score_text, (30, 20))
     screen.blit(coin_score_text, (dragons_screen_width // 2 + 120, 20))
 
@@ -209,12 +225,13 @@ while running:
 
     countdown_text = font.render(str(remaining_time), True, light_gray)
     text_rect = countdown_text.get_rect(topleft=(30, dragons_screen_height - 30 - countdown_text.get_height()))
+
     screen.blit(countdown_text, text_rect)
 
     pygame.display.flip()
     clock.tick(FPS)
 
-win_lose_screen.win_lose_screen(fruits_player1, fruits_player2)
+win_lose_screen.win_lose_screen(fruits_player1, fruits_player2, coins_player1, coins_player2)
 
 pygame.quit()
 sys.exit()

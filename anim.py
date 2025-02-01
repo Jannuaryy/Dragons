@@ -9,8 +9,8 @@ running = True
 
 
 
-sprite_sheet_image = pygame.image.load('textures/items.png').convert_alpha()
-sprite_sheet = SpriteSheet.SpriteSheet(sprite_sheet_image)
+dragon_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/frame final.png').convert_alpha())
+dragon_sprite = dragon_sheet.get_image(0, 800, 800, 1, green)
 
 
 animation_list = []
@@ -19,8 +19,8 @@ last_update = pygame.time.get_ticks()
 anim_cooldown = 700
 frame = 0
 COLOR = (70, 70, 70)
-for i in range(anim_steps):
-    animation_list.append(sprite_sheet.get_image(i, 21, 20, 10, COLOR))
+# for i in range(anim_steps):
+#     animation_list.append(sprite_sheet.get_image(i, 21, 20, 10, COLOR))
 
 
 
@@ -34,7 +34,7 @@ while running:
         if frame >= len(animation_list):
             frame = 0
 
-    screen.blit(animation_list[frame], (0, 0))
+    screen.blit(dragon_sprite, (0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
