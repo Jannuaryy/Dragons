@@ -18,6 +18,10 @@ player1_y = 700
 player2_x = 0
 player2_y = 0
 
+directions = ['UP', 'RIGHT', 'DOWN', 'LEFT']
+directions_player1 = directions[0]
+directions_player2 = directions[2]
+
 num_food = 10
 num_coins = 2
 border_thickness = 100
