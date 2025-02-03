@@ -46,6 +46,9 @@ dragon_sprite_2 = dragon_sheet_2.get_image(0, 40, 40, 0.5, light_gray)
 frame_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/frame.png').convert_alpha())
 frame_image = frame_sheet.get_image(0, 800, 800, 1, light_gray)
 
+field_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/field.png').convert_alpha())
+field_image = field_sheet.get_image(0, 800, 800, 1, green)
+
 for i in range(items_sprites_count):
     items_sheets_list.append(items_sprite_sheet.get_image(i, 21, 20, 1, light_gray))
 
@@ -161,7 +164,6 @@ while running:
         new_foods_needed = num_food - len(fruits)
         new_foods = generate_food(new_foods_needed)
         fruits = {**fruits, **new_foods}
-        # fruits.extend(new_foods)
 
     if (player1_x, player1_y) in coins:
         coins.remove((player1_x, player1_y))
@@ -181,14 +183,15 @@ while running:
     if countdown <= 0:
         running = False
 
-    # screen.blit(frame_image, (0, 0))
-    screen.fill(light_gray)
 
-    draw_grid()
+    screen.fill(light_gray)
+    # закомментировать чтобы убрать шахматное поле
+    screen.blit(field_image, (0, 0))
+    # раскомментировать для сетки (2 вариант)
+    #draw_grid()
 
 
     for fruit_item in fruits.items():
-        #pygame.draw.rect(screen, green, [foodx, foody, size_of_field, size_of_field])
         screen.blit(items_sheets_list[fruit_item[1]], fruit_item[0])
 
 
@@ -201,8 +204,6 @@ while running:
         screen.blit(coin_images_list[coin_current_frame], (coinx, coiny))
 
     screen.blit(dragon_sprite, (player1_x, player1_y))
-    #pygame.draw.rect(screen, blue, (player1_x, player1_y, size_of_field, size_of_field))
-    #pygame.draw.rect(screen, red, (player2_x, player2_y, size_of_field, size_of_field))
     screen.blit(dragon_sprite_2, (player2_x, player2_y))
 
     pygame.draw.rect(screen, black, (0, 0, dragons_screen_width, dragons_screen_height), border_thickness)

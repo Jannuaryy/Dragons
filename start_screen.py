@@ -1,4 +1,5 @@
 import sys
+
 import pygame
 from config import *
 
@@ -29,6 +30,14 @@ def start_screen():
     intro_rect.top = text_curr_y
     intro_rect.x = round((dragons_screen_width - intro_rect.width) / 2)
     screen.blit(intro_rendered, intro_rect)
+
+    text_curr_y +=  100
+
+    version_rendered = pygame.font.Font('Skatec.ttf', 50).render('0.1 ALFA', 1, pygame.Color('white'))
+    version_rect = version_rendered.get_rect()
+    version_rect.top = text_curr_y
+    version_rect.x = 650
+    screen.blit(version_rendered, version_rect)
 
     while True:
         for event in pygame.event.get():

@@ -3,14 +3,16 @@ pygame.init()
 from config import *
 import SpriteSheet
 
+# технический файл для проверки анимаций/спрайтов
+
 screen = pygame.display.set_mode((dragons_screen_width, dragons_screen_height))
 pygame.display.set_caption(dragons_game_name)
 running = True
 
 
 
-dragon_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/frame final.png').convert_alpha())
-dragon_sprite = dragon_sheet.get_image(0, 800, 800, 1, green)
+test_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/field.png').convert_alpha())
+test_image = test_sheet.get_image(0, 800, 800, 1, green)
 
 
 animation_list = []
@@ -34,7 +36,7 @@ while running:
         if frame >= len(animation_list):
             frame = 0
 
-    screen.blit(dragon_sprite, (0, 0))
+    screen.blit(test_image, (0, 0))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             running = False
