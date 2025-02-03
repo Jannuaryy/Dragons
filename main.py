@@ -16,6 +16,9 @@ fruits_player2 = 0
 coins_player1 = 0
 coins_player2 = 0
 
+freeze_player1=0
+freeze_player2=0
+
 font = pygame.font.Font('Skatec.ttf', 74)
 last_update_time = time.time()
 remaining_time = countdown
@@ -93,6 +96,31 @@ def draw_grid():
         pygame.draw.line(screen, black, (0, y), (dragons_screen_width, y))
 
 
+class Bullet:
+    def __init__(self, direction, x, y):
+        self.directions_player=direction
+        self.x = x
+        self.y = y
+        self.speed = size_of_field
+        self.distance_traveled = 0
+
+    def move(self):
+        if self.directions_player==directions[0]:
+            self.y -= self.speed
+        if self.directions_player==directions[1]:
+            self.x += self.speed
+        if self.directions_player==directions[2]:
+            self.y += self.speed
+        if self.directions_player==directions[3]:
+            self.x -= self.speed
+        self.distance_traveled += size_of_field
+        if (self.x < border_thickness or self.x > dragons_screen_width-border_thickness-size_of_field or
+                self.y < border_thickness or self.y > dragons_screen_height-border_thickness-size_of_field):
+            return False
+        return True
+
+bullets_player = []
+
 fruits = generate_food(num_food)
 
 coins = generate_coin(num_coins)
@@ -119,23 +147,39 @@ while running:
     new_player2_x = player2_x
     new_player2_y = player2_y
 
-    if keys[pygame.K_LEFT]:
-        new_player1_x -= size_of_field
-    if keys[pygame.K_RIGHT]:
-        new_player1_x += size_of_field
-    if keys[pygame.K_UP]:
-        new_player1_y -= size_of_field
-    if keys[pygame.K_DOWN]:
-        new_player1_y += size_of_field
+    if time.time()<freeze_player1:
+        new_player1_x=player1_x
+        new_player1_y=player1_y
+    else:
+        if keys[pygame.K_LEFT]:
+            new_player1_x -= size_of_field
+        if keys[pygame.K_RIGHT]:
+            new_player1_x += size_of_field
+        if keys[pygame.K_UP]:
+            new_player1_y -= size_of_field
+        if keys[pygame.K_DOWN]:
+            new_player1_y += size_of_field
+        if keys[pygame.K_SPACE]:
+            bullets_player.append(Bullet(directions_player1, new_player1_x, new_player1_y))
+        if keys[pygame.K_m]:
+            directions_player1=directions[directions.index(directions_player1)-1]
 
-    if keys[pygame.K_a]:
-        new_player2_x -= size_of_field
-    if keys[pygame.K_d]:
-        new_player2_x += size_of_field
-    if keys[pygame.K_w]:
-        new_player2_y -= size_of_field
-    if keys[pygame.K_s]:
-        new_player2_y += size_of_field
+    if time.time() < freeze_player2:
+        new_player2_x = player2_x
+        new_player2_y = player2_y
+    else:
+        if keys[pygame.K_a]:
+            new_player2_x -= size_of_field
+        if keys[pygame.K_d]:
+            new_player2_x += size_of_field
+        if keys[pygame.K_w]:
+            new_player2_y -= size_of_field
+        if keys[pygame.K_s]:
+            new_player2_y += size_of_field
+        if keys[pygame.K_q]:
+            bullets_player.append(Bullet(directions_player2, new_player2_x, new_player2_y))
+        if keys[pygame.K_e]:
+            directions_player2=directions[directions.index(directions_player2)-1]
 
     if not (new_player1_x < new_player2_x + size_of_field and
             new_player1_x + size_of_field > new_player2_x and
@@ -190,6 +234,17 @@ while running:
     # раскомментировать для сетки (2 вариант)
     #draw_grid()
 
+    for bullet in bullets_player:
+        if bullet.move():
+            if (bullet.x==player1_x and bullet.y==player1_y):
+                freeze_player1=time.time()+5
+            if (bullet.x==player2_x and bullet.y==player2_y):
+                freeze_player2=time.time()+5
+                bullets_player.remove(bullet)
+        else:
+            bullets_player.remove(bullet)
+
+    bullets_player = [bullet for bullet in bullets_player if bullet.distance_traveled < 6 * size_of_field]
 
     for fruit_item in fruits.items():
         screen.blit(items_sheets_list[fruit_item[1]], fruit_item[0])
@@ -215,6 +270,9 @@ while running:
     screen.blit(frame_image, (0, 0))
     screen.blit(fruit_score_text, (30, 20))
     screen.blit(coin_score_text, (dragons_screen_width // 2 + 120, 20))
+
+    for bullet in bullets_player:
+        pygame.draw.rect(screen, red, (bullet.x, bullet.y, size_of_field, size_of_field))
 
     if countdown_active:
         current_time = time.time()
