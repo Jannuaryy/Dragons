@@ -258,6 +258,11 @@ while running:
         # pygame.draw.rect(screen, yellow, [coinx, coiny, size_of_field, size_of_field])
         screen.blit(coin_images_list[coin_current_frame], (coinx, coiny))
 
+
+    if time.time() < freeze_player1:
+        pygame.draw.rect(screen, red, [player1_x, player1_y, size_of_field, size_of_field])
+    if time.time() < freeze_player2:
+        pygame.draw.rect(screen, red, [player2_x, player2_y, size_of_field, size_of_field])
     screen.blit(dragon_sprite, (player1_x, player1_y))
     screen.blit(dragon_sprite_2, (player2_x, player2_y))
 
