@@ -5,6 +5,11 @@ from pygame.examples.chimp import load_image
 
 from config import *
 
+import sqlite3
+
+conn = sqlite3.connect('Coins.db')
+cursor = conn.cursor()
+
 screen = pygame.display.set_mode((dragons_screen_width, dragons_screen_height))
 pygame.display.set_caption(dragons_game_name)
 
@@ -52,6 +57,14 @@ def win_lose_screen(fruits_player1, fruits_player2, coins_player1, coins_player2
     coin_rect.top = text_curr_y
     coin_rect.x = round((dragons_screen_width - coin_rect.width) / 2)
     screen.blit(coin_rendered, coin_rect)
+
+    last_coins_player1=cursor.execute('SELECT coins_player FROM coins WHERE player=?',('player1',)).fetchone()[0]
+    last_coins_player2=cursor.execute('SELECT coins_player FROM coins WHERE player=?',('player2',)).fetchone()[0]
+    cursor.execute('UPDATE coins SET coins_player= ? WHERE player= ?', (coins_player1+last_coins_player1,'player1'))
+    cursor.execute('UPDATE coins SET coins_player= ? WHERE player= ?', (coins_player2+last_coins_player2,'player2'))
+    
+    conn.commit()
+    conn.close()
 
     while True:
         for event in pygame.event.get():
