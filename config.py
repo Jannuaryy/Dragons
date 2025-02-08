@@ -27,3 +27,4 @@ num_coins = 2
 border_thickness = 100
 
 COLOR = (70, 70, 70)
+

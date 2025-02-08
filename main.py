@@ -6,7 +6,19 @@ import start_screen, win_lose_screen
 from config import *
 import SpriteSheet
 
+pygame.mixer.init()
+pygame.mixer.music.load('music/background.mp3')
+coin_sound = pygame.mixer.Sound('music/coin.wav')
+coin_sound.set_volume(0.5)
+trap_sound = pygame.mixer.Sound('music/trap.wav')
+trap_sound.set_volume(0.5)
+pickup_sound = pygame.mixer.Sound('music/pickup.aiff')
+hit_sound = pygame.mixer.Sound('music/hit.aiff')
+free_sound = pygame.mixer.Sound('music/free.wav')
+
 pygame.init()
+pygame.mixer.music.play(loops=-1)
+pygame.mixer.music.set_volume(0.5)
 start_screen.start_screen()
 
 # players results:
@@ -31,6 +43,10 @@ coin_anim_steps = 8
 coin_sprite_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/coin animation.png').convert_alpha())
 coin_images_list = []
 
+
+
+
+
 for i in range(coin_anim_steps):
     coin_images_list.append(coin_sprite_sheet.get_image(i, 21, 20, 1, light_gray))
 coin_current_frame = 0
@@ -42,6 +58,9 @@ items_sprite_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/items.p
 
 dragon_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/dragon sprite.png').convert_alpha())
 dragon_sprite = dragon_sheet.get_image(0, 40, 40, 0.5, light_gray)
+
+cave_sheet = SpriteSheet.SpriteSheet(pygame.image.load('textures/cave.png').convert_alpha())
+cave_sprite = cave_sheet.get_image(0, 40, 40, 0.5, green)
 
 dragon_sheet_2 = SpriteSheet.SpriteSheet(pygame.image.load('textures/blue dragon.png').convert_alpha())
 dragon_sprite_2 = dragon_sheet_2.get_image(0, 40, 40, 0.5, light_gray)
@@ -160,6 +179,7 @@ while running:
         if keys[pygame.K_DOWN]:
             new_player1_y += size_of_field
         if keys[pygame.K_SPACE]:
+            hit_sound.play(loops=0)
             bullets_player.append(Bullet(directions_player1, new_player1_x, new_player1_y))
         if keys[pygame.K_m]:
             directions_player1=directions[directions.index(directions_player1)-1]
@@ -177,6 +197,7 @@ while running:
         if keys[pygame.K_s]:
             new_player2_y += size_of_field
         if keys[pygame.K_q]:
+            hit_sound.play(loops=0)
             bullets_player.append(Bullet(directions_player2, new_player2_x, new_player2_y))
         if keys[pygame.K_e]:
             directions_player2=directions[directions.index(directions_player2)-1]
@@ -197,10 +218,12 @@ while running:
 
 
     if fruits.get((player1_x, player1_y)) != None:
+        pickup_sound.play(loops=0)
         fruit_frame = fruits.pop((player1_x, player1_y))
         fruits_player1 += 1
 
     if fruits.get((player2_x, player2_y)) != None:
+        pickup_sound.play(loops=0)
         fruit_frame = fruits.pop((player2_x, player2_y))
         fruits_player2 += 1
 
@@ -210,10 +233,12 @@ while running:
         fruits = {**fruits, **new_foods}
 
     if (player1_x, player1_y) in coins:
+        coin_sound.play(loops=0)
         coins.remove((player1_x, player1_y))
         coins_player1 += 1
 
     if (player2_x, player2_y) in coins:
+        coin_sound.play(loops=0)
         coins.remove((player2_x, player2_y))
         coins_player2 += 1
 
@@ -237,8 +262,10 @@ while running:
     for bullet in bullets_player:
         if bullet.move():
             if (bullet.x==player1_x and bullet.y==player1_y):
+                trap_sound.play(loops=0)
                 freeze_player1=time.time()+5
             if (bullet.x==player2_x and bullet.y==player2_y):
+                trap_sound.play(loops=0)
                 freeze_player2=time.time()+5
                 bullets_player.remove(bullet)
         else:
